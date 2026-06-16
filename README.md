@@ -111,6 +111,22 @@ Android debug builds are written to:
 apps/android/ForgeAgentAndroid/app/build/outputs/apk/debug/app-debug.apk
 ```
 
+Build the APK locally:
+
+```sh
+npm run android:build
+```
+
+Requires JDK 17 and Android SDK. The build script uses the project Gradle wrapper and defaults to Homebrew paths (`/opt/homebrew/opt/openjdk@17` and `/opt/homebrew/share/android-commandlinetools`). Override via `JAVA_HOME` and `ANDROID_HOME` if needed.
+
+```sh
+# Install prerequisites (macOS + Homebrew)
+brew install openjdk@17 android-commandlinetools
+
+# Build and install to a connected device
+npm run android:install
+```
+
 ## Chrome
 
 ForgeWebridge connects DeepSeek-Forge to your existing visible Chrome profile. It lets the agent operate logged-in pages you can see, while avoiding cookie/password extraction and stealth automation.

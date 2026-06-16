@@ -21,7 +21,6 @@ import { evaluateWorkspaceReadiness } from "../workspace/readiness.js";
 
 const logger = createLogger("agent-loop");
 
-const MAX_ITERATIONS = 50;
 const DEFAULT_MAX_CONTEXT_TOKENS = 100_000;
 const DEFAULT_AUTOCOMPACT_BUFFER = 10_000;
 const DEFAULT_COMPACTION_KEEP_RECENT_TOKENS = 20_000;
@@ -321,7 +320,7 @@ export class AgentLoop {
     logger.debug("Turn iteration starting", { sessionId });
 
     let finalReadinessBlocks = 0;
-    for (let i = 0; i < MAX_ITERATIONS; i++) {
+    while (true) {
       throwIfAborted(this.#signal);
       this.#refreshTools();
       const events = this.#readThread?.(sessionId) ?? this.#threadStore.getThread(sessionId);
@@ -407,7 +406,7 @@ export class AgentLoop {
       throwIfAborted(this.#signal);
 
       if (response.finishReason === "stop") {
-        logger.debug("Turn finished by model", { sessionId, iteration: i + 1 });
+        logger.debug("Turn finished by model", { sessionId });
         const latestEvents = this.#readThread?.(sessionId) ?? this.#threadStore.getThread(sessionId);
         const readiness = evaluateWorkspaceReadiness({
           sessionId,
@@ -492,7 +491,6 @@ export class AgentLoop {
         finalReadinessBlocks = 0;
         logger.debug("Turn produced tool calls", {
           sessionId,
-          iteration: i + 1,
           toolCount: response.toolCalls?.length ?? 0,
         });
         if (!response.toolCalls || response.toolCalls.length === 0) {
@@ -659,7 +657,7 @@ export class AgentLoop {
       }
     }
 
-    return { outcome: "tool_failure", message: "Max iterations exceeded" };
+    // unreachable: the loop above only exits via return/break
   }
 
   #refreshTools(): void {

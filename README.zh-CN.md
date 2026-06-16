@@ -111,6 +111,22 @@ Android debug build 输出到：
 apps/android/ForgeAgentAndroid/app/build/outputs/apk/debug/app-debug.apk
 ```
 
+本地构建 APK：
+
+```sh
+npm run android:build
+```
+
+需要 JDK 17 和 Android SDK。构建脚本使用项目 Gradle wrapper，默认读取 Homebrew 路径（`/opt/homebrew/opt/openjdk@17` 和 `/opt/homebrew/share/android-commandlinetools`）。可通过 `JAVA_HOME` 和 `ANDROID_HOME` 环境变量覆盖。
+
+```sh
+# 安装前置依赖（macOS + Homebrew）
+brew install openjdk@17 android-commandlinetools
+
+# 构建并安装到已连接的设备
+npm run android:install
+```
+
 ## Chrome
 
 ForgeWebridge 会把 DeepSeek-Forge 连接到你当前可见的 Chrome profile。Agent 可以操作你看得到的已登录页面，但不会读取 cookie/password，也不会做隐身式风控规避。

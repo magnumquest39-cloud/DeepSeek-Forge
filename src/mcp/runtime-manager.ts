@@ -42,6 +42,16 @@ import type {
 
 const logger = createLogger("mcp-runtime");
 
+function envWithUserPath(baseEnv?: Record<string, string>): Record<string, string> {
+  const home = process.env.HOME;
+  if (!home) return baseEnv ?? {};
+  const userBinDirs = [`${home}/.local/bin`, `${home}/.cargo/bin`, `${home}/bin`];
+  const extraPath = userBinDirs.join(":");
+  const currentPath = baseEnv?.PATH ?? process.env.PATH ?? "";
+  const mergedPath = currentPath.includes(extraPath) ? currentPath : `${extraPath}:${currentPath}`;
+  return { ...baseEnv, PATH: mergedPath };
+}
+
 const DEFAULT_CONNECT_TIMEOUT_MS = 30_000;
 const DEFAULT_TOOL_TIMEOUT_MS = 120_000;
 const DEFAULT_KEEPALIVE_MS = 180_000;
@@ -868,7 +878,7 @@ export class McpRuntimeManager {
       const params: ConstructorParameters<typeof StdioClientTransport>[0] = {
         command: server.command,
         args: server.args ?? [],
-        env: this.#safeEnv(server.env),
+        env: envWithUserPath(this.#safeEnv(server.env)),
         stderr: "pipe",
       };
       if (server.cwd !== undefined) params.cwd = server.cwd;

@@ -10,7 +10,7 @@ export function buildSystemPrompt(options: {
   sessionId: string;
 }): string {
   const parts: string[] = [
-    "You are DeepSeek-Forge, an AI agent that helps users accomplish tasks.",
+    "You are DeepSeek-Forge, an unofficial AI agent created by DeepSeek enthusiasts to help users accomplish tasks.",
     "You have access to tools. Use them when needed to complete the user's request.",
     "Respond concisely and directly. Do not explain what you're doing unless asked.",
     "",

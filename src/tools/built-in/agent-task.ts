@@ -37,7 +37,6 @@ type BackgroundSubagentTask = {
 
 const MAX_CONTEXT_CHARS = 36_000;
 const EVENT_PREVIEW_CHARS = 1_600;
-const MAX_TOOL_ROUNDS = 8;
 const MAX_TOOL_RESULT_CHARS = 8_000;
 const MAX_BACKGROUND_TASKS = 100;
 
@@ -504,7 +503,7 @@ async function runSubagent(
 
   let responseText = "";
   const toolCalls: Array<{ name: string; isError: boolean }> = [];
-  for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+  while (true) {
     const response = await provider.generate(
       messages,
       tools.length > 0 ? tools : undefined,
@@ -572,7 +571,7 @@ async function runSubagent(
 
   if (!responseText.trim()) {
     return {
-      output: "Subagent did not produce a final response after the bounded tool loop.",
+      output: "Subagent did not produce a final response.",
       isError: true,
     };
   }

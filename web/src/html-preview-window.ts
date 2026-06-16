@@ -1,6 +1,20 @@
 const PREVIEW_PREFIX = "forgeagent.htmlPreview.";
 const PREVIEW_TTL_MS = 10 * 60 * 1000;
 
+function generateId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers/WebViews that lack crypto.randomUUID()
+  // Uses crypto.getRandomValues() (available since Chrome 11 / WebView 37)
+  const buf = new Uint8Array(16);
+  crypto.getRandomValues(buf);
+  buf[6] = (buf[6] & 0x0f) | 0x40; // version 4
+  buf[8] = (buf[8] & 0x3f) | 0x80; // variant
+  const hex = Array.from(buf, (b) => b.toString(16).padStart(2, "0"));
+  return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+}
+
 export type StoredHtmlPreview = {
   html: string;
   title: string;
@@ -10,7 +24,7 @@ export type StoredHtmlPreview = {
 
 export function storeHtmlPreview(html: string, title = "DeepSeek-Forge HTML Preview"): string {
   cleanupExpiredHtmlPreviews();
-  const id = crypto.randomUUID();
+  const id = generateId();
   const now = Date.now();
   const payload: StoredHtmlPreview = {
     html,
