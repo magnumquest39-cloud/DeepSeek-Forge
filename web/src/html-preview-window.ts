@@ -9,10 +9,10 @@ function generateId(): string {
   // Uses crypto.getRandomValues() (available since Chrome 11 / WebView 37)
   const buf = new Uint8Array(16);
   crypto.getRandomValues(buf);
-  buf[6] = (buf[6] & 0x0f) | 0x40; // version 4
-  buf[8] = (buf[8] & 0x3f) | 0x80; // variant
-  const hex = Array.from(buf, (b) => b.toString(16).padStart(2, "0"));
-  return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+  buf[6] = (buf[6]! & 0x0f) | 0x40; // version 4
+  buf[8] = (buf[8]! & 0x3f) | 0x80; // variant
+  const parts = Array.from(buf, (b) => b.toString(16).padStart(2, "0"));
+  return `${parts[0]!}${parts[1]!}${parts[2]!}${parts[3]!}-${parts[4]!}${parts[5]!}-${parts[6]!}${parts[7]!}-${parts[8]!}${parts[9]!}-${parts[10]!}${parts[11]!}${parts[12]!}${parts[13]!}${parts[14]!}${parts[15]!}`;
 }
 
 export type StoredHtmlPreview = {
