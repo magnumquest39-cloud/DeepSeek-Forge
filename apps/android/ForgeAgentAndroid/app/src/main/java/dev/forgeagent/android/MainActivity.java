@@ -139,6 +139,18 @@ public final class MainActivity extends Activity {
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (webView != null) {
+            webView.stopLoading();
+            webView.destroy();
+            webView = null;
+            renderConnectionHome(true);
+            return;
+        }
+        super.onBackPressed();
+    }
+
     private boolean handlePairIntent(Intent intent) {
         Uri uri = intent == null ? null : intent.getData();
         if (!isPairUri(uri)) return false;
@@ -195,10 +207,6 @@ public final class MainActivity extends Activity {
                 openConnection(selected, sessionId);
                 return;
             }
-        }
-        if (connections.size() == 1) {
-            openConnection(connections.get(0), "");
-            return;
         }
         renderConnectionHome(true);
     }

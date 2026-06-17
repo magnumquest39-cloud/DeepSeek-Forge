@@ -2883,11 +2883,13 @@ function SettingsDialog(props: {
   onError: (error: string) => void;
   onClose: () => void;
 }) {
-  const [section, setSection] = useState<"models" | "runtime" | "local">("models");
+  const isAndroid = typeof (window as any).forgeAndroid !== "undefined";
+  const [section, setSection] = useState<"models" | "runtime" | "local" | "connections">("models");
   const sections: Array<{ id: typeof section; label: string }> = [
     { id: "models", label: "Models" },
     { id: "runtime", label: "Runtime" },
     { id: "local", label: "Local access" },
+    ...(isAndroid ? [{ id: "connections" as const, label: "Connections" }] : []),
   ];
   return (
     <div
@@ -2945,6 +2947,24 @@ function SettingsDialog(props: {
                 <div><span>Base URL</span><strong>{props.setup.provider.baseUrl}</strong></div>
                 <div><span>Stored key</span><strong>{props.setup.provider.apiKeyMasked ?? "none"}</strong></div>
                 <div><span>Updated</span><strong>{props.setup.provider.updatedAt ? new Date(props.setup.provider.updatedAt).toLocaleString() : "not saved"}</strong></div>
+              </div>
+            ) : null}
+            {section === "connections" ? (
+              <div className="settings-connections-panel">
+                <div className="settings-section-heading">
+                  <span>Paired Desktops</span>
+                  <strong>Manage saved Mac connections</strong>
+                </div>
+                <p className="settings-connections-desc">
+                  Switch between paired Macs, pair a new desktop, or remove saved connections. This menu is native, so it works even when the current connection is offline.
+                </p>
+                <button
+                  type="button"
+                  className="forge-button primary"
+                  onClick={() => (window as any).forgeAndroid?.openConnectionSwitcher()}
+                >
+                  Open connection manager
+                </button>
               </div>
             ) : null}
           </section>
